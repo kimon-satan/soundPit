@@ -5,7 +5,7 @@ ofxMyVec2f::ofxMyVec2f()
     //ctor
 }
 
-int ofxMyVec2f::pointPolyTest(vector <ofxVec2f>* polygon){
+int ofxMyVec2f::pointPolyTest(vector <ofVec2f>* polygon){
 int counter = 0;
   int i;
   int N = polygon->size();

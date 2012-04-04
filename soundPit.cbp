@@ -133,6 +133,8 @@
 		<Unit filename="ofxMyCv/src/ofxCvMyContourFinder.h" />
 		<Unit filename="ofxMyCv/src/ofxCvMyCv.h" />
 		<Unit filename="ofxMyGui/myTextInput.h" />
+		<Unit filename="ofxMyVec2f/src/ofxMyVec2f.cpp" />
+		<Unit filename="ofxMyVec2f/src/ofxMyVec2f.h" />
 		<Unit filename="src/capture.cpp">
 			<Option virtualFolder="src/" />
 		</Unit>
@@ -164,12 +166,6 @@
 			<Option virtualFolder="src/" />
 		</Unit>
 		<Unit filename="src/main.cpp">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/objectTracker.cpp">
-			<Option virtualFolder="src/" />
-		</Unit>
-		<Unit filename="src/objectTracker.h">
 			<Option virtualFolder="src/" />
 		</Unit>
 		<Unit filename="src/trackingObject.cpp">
