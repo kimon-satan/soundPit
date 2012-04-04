@@ -5,7 +5,7 @@
 #include "ofxOpenCv.h"
 #include "ofxXmlSettings.h"
 #include "ofxCvMyCv.h"
-#include "ofxVectorMath.h"
+//#include "ofxVectorMath.h"
 #include "ofxMyVec2f.h"
 #include "trackingObject.h"
 #include <iostream>
@@ -65,7 +65,7 @@ class capture : public myUtilities
 	ofxCvMyContourFinder contFinder[4];
 
 	IplImage *selImage,*vidhsv,*vidImage;
-	
+
 	ofxCvColorImage segImg, maskedImg;
 
     int width,height;

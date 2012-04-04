@@ -26,9 +26,9 @@ myColourChannel::myColourChannel()
     tempImg = cvCreateImage(cvSize(h_bins*5,s_bins *5),8,1);
     hist_imgs.push_back(tempImg);
     }
-	
+
 	histDisp.allocate(h_bins * 5, s_bins * 5);
-	
+
 
     dilate = 1;
     erode = 1;
@@ -63,12 +63,12 @@ void myColourChannel::allocateImages(CvSize vidSize){
 
     vid_planes[0] = vid_s;
     vid_planes[1] = vid_h;
-	
+
 	vMaskDisp.allocate(vidSize.width, vidSize.height);
 	sampleCombDisp.allocate(vidSize.width, vidSize.height);
 	sampleBpDisp.allocate(vidSize.width, vidSize.height);
 	vidBpDisp.allocate(vidSize.width, vidSize.height);
-	
+
 
 
 }
@@ -128,7 +128,7 @@ void myColourChannel::recalcHistImg(int hist){
                            );
         }
     }
-	
+
 		histDisp = hist_imgs[selectedHist];
 
 }
@@ -209,22 +209,22 @@ void myColourChannel::backProject(IplImage* vid_hsv){
                 }
 
         cvMul(vid_bp, v_mask, vid_bp, 1.0 );
-        if(erode!= 0)cvErode(vid_bp, vid_bp, CV_SHAPE_RECT, erode);
-        if(dilate != 0)cvDilate(vid_bp, vid_bp, CV_SHAPE_RECT, dilate);
+        //if(erode!= 0)cvErode(vid_bp, vid_bp, CV_SHAPE_RECT, erode);
+        //if(dilate != 0)cvDilate(vid_bp, vid_bp, CV_SHAPE_RECT, dilate);
         cvSmooth(vid_bp, vid_bp,CV_GAUSSIAN,gauss,gauss);
-		
+
 		vMaskDisp = v_mask;
 		vidBpDisp = vid_bp;
-		
+
 		vidBpDisp.flagImageChanged();
 		vMaskDisp.flagImageChanged();
-		
+
     }else{
 
     cvZero(vid_bp);
 
     }
-	
+
 
 
 }
@@ -250,7 +250,7 @@ void myColourChannel::drawSampleBp(int x, int y, int mode){
 
 
     }else if(mode == 1){
-		
+
 		sampleCombDisp.draw(x,y);
 
     }
@@ -339,12 +339,12 @@ void myColourChannel::keyPressed(int key){
         if(selectedItem == 1){
 		selectedHist +=1;
 		selectedHist = selectedHist%num_hists;
-		histDisp = hist_imgs[selectedHist];					
+		histDisp = hist_imgs[selectedHist];
 		}
 		if(selectedItem == 2){newHist();}
         if(selectedItem == 3){
-			
-			bp_thresh += 1; 
+
+			bp_thresh += 1;
 		//	bp_thresh = min(bp_thresh, 255);
 		}
         if(selectedItem == 4){erode +=1;}
@@ -361,7 +361,7 @@ void myColourChannel::keyPressed(int key){
 
     case OF_KEY_DOWN:
         if(selectedItem == 2)resetHist();
-        if(selectedItem == 3){bp_thresh -=1; 
+        if(selectedItem == 3){bp_thresh -=1;
 		//	bp_thresh = max(bp_thresh, 0);
 		}
         if(selectedItem == 4){erode -=1;}

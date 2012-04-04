@@ -3,7 +3,7 @@
 
 #include "ofMain.h"
 #include "ofxOsc.h"
-#include "ofxVectorMath.h"
+//#include "ofxVectorMath.h"
 #include "ofxXmlSettings.h"
 #include"trackingObject.h"
 
@@ -11,31 +11,31 @@
 #define PORT 57120
 
 struct collision{
-	
+
 	int obj1[2];
 	int obj2[2];
 	float power;
 	ofPoint location;
 	bool repeat;
 	int time;
-	
+
 };
 
 struct patch{
-	
+
 	ofRectangle rect;
 	int count;
 	int col;
 	int isLive;
 	bool isFilled;
-	
+
 };
 
 
 class interpreter
 {
 public:
-	
+
 	interpreter();
 	void setTrPtrs(vector<patch> * pnt_ptr, vector<int> * md_ptr);
 	void feedObjects(trackingObject t_objs[][10], int size, bool newFrame);
@@ -49,13 +49,13 @@ public:
 	vector<collision>* getCollisions();
 	vector<int>* getColModes();
 
-	
+
 	virtual ~interpreter();
 protected:
 private:
-	
+
     ofxOscSender sender;
-	
+
     float collDist, collSpeedThresh;
     int synthsRunning;
     int maxSynths;
@@ -68,14 +68,14 @@ private:
     vector<ofPoint> expiredCollisions;
     vector<collision> pastCollisions;
     vector< vector <bool> > nowCollisions;
-	
+
 	vector<patch> * transRects;
 	vector<int>* colMode;
-	
+
     int selectedItem;
     int selectedMenu;
-	
-	
+
+
 };
 
 #endif // INTERPRETER_H

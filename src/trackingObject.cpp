@@ -102,7 +102,7 @@ void trackingObject::updateAvPos(){
 
     float x = 0;
     float y = 0;
-    ofxVec2f pos;
+    ofVec2f pos;
 
 
     for(int i =0; i < drawhistory.size(); i++){
@@ -125,8 +125,8 @@ void trackingObject::updateAvPos(){
 
 void trackingObject::updateDirection(){
 
-ofxVec2f axisY;
-ofxVec2f trip;
+ofVec2f axisY;
+ofVec2f trip;
 
 axisY.set(50,0);
 

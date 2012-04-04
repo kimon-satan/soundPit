@@ -413,7 +413,7 @@ glTranslatef(340,0,0);
 
             if(finalObjects[col][i].getPresent()){
 
-                ofxVec2f pos;
+                ofVec2f pos;
                 pos = finalObjects[col][i].getAvPos();
                 //pos.x = finalObjects[col][i].getProjCentX();
                 //pos.y = finalObjects[col][i].getProjCentY();

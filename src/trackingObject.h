@@ -1,7 +1,7 @@
 #ifndef TRACKINGOBJECT_H
 #define TRACKINGOBJECT_H
 #include "ofMain.h"
-#include "ofxVectorMath.h"
+//#include "ofxVectorMath.h"
 #include "ofxCvMyCv.h"
 #include <algorithm>
 
@@ -11,7 +11,7 @@ class trackingObject : public ofxCvMyBlob
         trackingObject();
         virtual ~trackingObject();
 
-        ofxVec2f getAvPos();
+        ofVec2f getAvPos();
 
         bool getAssigned();
         void setAssigned(bool temp);
@@ -29,13 +29,13 @@ class trackingObject : public ofxCvMyBlob
         void updateDirection();
         void updateSpeed();
 
-        ofxVec2f projPos;
-        ofxVec2f avPos;
+        ofVec2f projPos;
+        ofVec2f avPos;
         float direction, true_direction;
         bool collision;
 
-        vector<ofxVec2f> history;
-        vector<ofxVec2f> drawhistory;
+        vector<ofVec2f> history;
+        vector<ofVec2f> drawhistory;
         bool assigned, present, moving;
         int ghost, hist_size;
         float speed, lThresh, uThresh;
