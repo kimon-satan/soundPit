@@ -205,7 +205,7 @@ void ofxCvMyContourFinder::draw( float x, float y, float w, float h ) {
     }
 
 	// ---------------------------- draw the bounding rectangle
-	ofSetColor(0xDD00CC);
+	ofSetHexColor(0xDD00CC);
     glPushMatrix();
     glTranslatef( x, y, 0.0 );
     glScalef( scalex, scaley, 0.0 );
@@ -217,7 +217,7 @@ void ofxCvMyContourFinder::draw( float x, float y, float w, float h ) {
 	}
 
 	// ---------------------------- draw the blobs
-	ofSetColor(0x00FFFF);
+	ofSetHexColor(0x00FFFF);
 
 	for( int i=0; i<(int)myblobs.size(); i++ ) {
 		ofNoFill();

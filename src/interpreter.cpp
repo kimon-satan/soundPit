@@ -538,7 +538,7 @@ void interpreter::drawMenus(){
 	glPushMatrix();
 	glTranslatef(30,300,0);
 
-	if(selectedMenu == 0){ofSetColor(0x00ffff);}else{ofSetColor(0xffffff);}
+	if(selectedMenu == 0){ofSetHexColor(0x00ffff);}else{ofSetHexColor(0xffffff);}
 	ofDrawBitmapString("Interpreter Settings:",0,0);
 
 	int maskMenuColors[5];
@@ -552,19 +552,19 @@ void interpreter::drawMenus(){
 	}
 
 	glTranslatef(0,15,0);
-	ofSetColor(maskMenuColors[0]);
+	ofSetHexColor(maskMenuColors[0]);
 	ofDrawBitmapString("Collision Distance:" + ofToString(collDist,2),0,0);
 	glTranslatef(0,15,0);
-	ofSetColor(maskMenuColors[1]);
+	ofSetHexColor(maskMenuColors[1]);
 	ofDrawBitmapString("MaxSynths:" + ofToString(maxSynths,0),0,0);
 	glTranslatef(0,15,0);
-	ofSetColor(maskMenuColors[2]);
+	ofSetHexColor(maskMenuColors[2]);
 	ofDrawBitmapString("MaxCollisions:" + ofToString(maxCollisions,0),0,0);
 	glTranslatef(0,15,0);
-	ofSetColor(maskMenuColors[3]);
+	ofSetHexColor(maskMenuColors[3]);
 	ofDrawBitmapString("CollSpeedThresh:" + ofToString(collSpeedThresh,2),0,0);
 	glTranslatef(0,15,0);
-	ofSetColor(maskMenuColors[4]);
+	ofSetHexColor(maskMenuColors[4]);
 	ofDrawBitmapString("SpeedScale:" + ofToString(speed_scale,2),0,0);
 	glPopMatrix();
 

@@ -310,7 +310,7 @@ void capture::drawMenus(){
 
 
     glTranslatef(0,15,0);
-    if(selectedMenu == 0){ofSetColor(0x00ffff);}else{ofSetColor(0xffffff);}
+    if(selectedMenu == 0){ofSetHexColor(0x00ffff);}else{ofSetHexColor(0xffffff);}
     ofDrawBitmapString("Select Window:",0,0);
 
     int windMenuColors[4];
@@ -323,16 +323,16 @@ void capture::drawMenus(){
 
     }
 
-    ofSetColor(windMenuColors[0]);
+    ofSetHexColor(windMenuColors[0]);
     glTranslatef(0,15,0);
     ofDrawBitmapString("zoom: " + ofToString(zoom, 0),0,0);
-    ofSetColor(windMenuColors[1]);
+    ofSetHexColor(windMenuColors[1]);
     glTranslatef(0,15,0);
     ofDrawBitmapString("zx: " + ofToString(zx,0),0,0);
-    ofSetColor(windMenuColors[2]);
+    ofSetHexColor(windMenuColors[2]);
     glTranslatef(0,15,0);
     ofDrawBitmapString("zy: " + ofToString(zy,0),0,0);
-    ofSetColor(windMenuColors[3]);
+    ofSetHexColor(windMenuColors[3]);
     glTranslatef(0,15,0);
     ofDrawBitmapString("sampleView: " + ofToString(sample_view,0),0,0);
 
@@ -347,7 +347,7 @@ void capture::drawMenus(){
 
 
     glTranslatef(0,15,0);
-    if(selectedMenu == 1){ofSetColor(0x00ffff);}else{ofSetColor(0xffffff);}
+    if(selectedMenu == 1){ofSetHexColor(0x00ffff);}else{ofSetHexColor(0xffffff);}
     ofDrawBitmapString("Seg and Contour Settings:",0,0);
 
     int bSetMenuColors[6];
@@ -362,22 +362,22 @@ void capture::drawMenus(){
 
 
     glTranslatef(0,15,0);
-    ofSetColor(bSetMenuColors[0]);
+    ofSetHexColor(bSetMenuColors[0]);
     ofDrawBitmapString("bkHighThresh: " + ofToString(bgSeg.high_scale,2),0,0);
     glTranslatef(0,15,0);
-    ofSetColor(bSetMenuColors[1]);
+    ofSetHexColor(bSetMenuColors[1]);
     ofDrawBitmapString("bkLowThresh: " + ofToString(bgSeg.low_scale,2),0,0);
     glTranslatef(0,15,0);
-    ofSetColor(bSetMenuColors[2]);
+    ofSetHexColor(bSetMenuColors[2]);
     ofDrawBitmapString("bkErode: " + ofToString(bgSeg.erode,0),0,0);
     glTranslatef(0,15,0);
-    ofSetColor(bSetMenuColors[3]);
+    ofSetHexColor(bSetMenuColors[3]);
     ofDrawBitmapString("bkDilate: " + ofToString(bgSeg.dilate,0),0,0);
     glTranslatef(0,15,0);
-    ofSetColor(bSetMenuColors[4]);
+    ofSetHexColor(bSetMenuColors[4]);
     ofDrawBitmapString("minBlob: " + ofToString(minBlob,0),0,0);
     glTranslatef(0,15,0);
-    ofSetColor(bSetMenuColors[5]);
+    ofSetHexColor(bSetMenuColors[5]);
     ofDrawBitmapString("maxBlob: " + ofToString(maxBlob,0),0,0);
     glTranslatef(0,15,0);
 
@@ -401,7 +401,7 @@ myCvmask* capture::getMasker(){
 //--------------------------------------------------------------
 void capture::draw(trackingObject t_objs[][10], int size){
 
-	ofSetColor(0xffffff);
+	ofSetHexColor(0xffffff);
 	ofDrawBitmapString("Framerate: " + ofToString(ofGetFrameRate(),2), 350, 720);
     drawMenus();
 
@@ -417,7 +417,7 @@ void capture::draw(trackingObject t_objs[][10], int size){
 
     if(zoomSel){
         ofNoFill();
-        ofSetColor(0x00FFFF);
+        ofSetHexColor(0x00FFFF);
         ofRect(zx,zy,(float)320/zoom, (float)240/zoom);
         ofFill();
         ofSetColor(255,255,255);
@@ -461,7 +461,7 @@ void capture::draw(trackingObject t_objs[][10], int size){
 
     ofSetColor(100,100,100);
     ofRect((width*3) + 20, 0, width, height);
-    ofSetColor(0xffffff);
+    ofSetHexColor(0xffffff);
 
     ofNoFill();
     ofRect((width*3) + 20, 0, width, height);
@@ -484,7 +484,7 @@ void capture::draw(trackingObject t_objs[][10], int size){
 
                 ofSetColor(255,255,255);
 
-                ofSetColor(0xff00ff);
+                ofSetHexColor(0xff00ff);
                 ofRect(t_objs[colour][blob].bounding_cv.x, t_objs[colour][blob].bounding_cv.y,
                        t_objs[colour][blob].bounding_cv.width, t_objs[colour][blob].bounding_cv.height);
 

@@ -277,7 +277,7 @@ glTranslatef(x,y,0);
 
 
     glTranslatef(0,15,0);
-    if(selected){ofSetColor(0x00ffff);}else{ofSetColor(0xffffff);}
+    if(selected){ofSetHexColor(0x00ffff);}else{ofSetHexColor(0xffffff);}
     ofDrawBitmapString("Historgram Settings:",0,0);
 
     int cSetMenuColors[10];
@@ -291,34 +291,34 @@ glTranslatef(x,y,0);
     }
 
     glTranslatef(0,15,0);
-    ofSetColor(cSetMenuColors[0]);
+    ofSetHexColor(cSetMenuColors[0]);
     ofDrawBitmapString("selectedColour: " + ofToString(colIndex, 0),0,0);
     glTranslatef(0,15,0);
-    ofSetColor(cSetMenuColors[1]);
+    ofSetHexColor(cSetMenuColors[1]);
     ofDrawBitmapString("selectedHist: " + ofToString(selectedHist, 0),0,0);
     glTranslatef(0,15,0);
-    ofSetColor(cSetMenuColors[2]);
+    ofSetHexColor(cSetMenuColors[2]);
     ofDrawBitmapString("numHists: " + ofToString(num_hists, 0),0,0);
     glTranslatef(0,15,0);
-    ofSetColor(cSetMenuColors[3]);
+    ofSetHexColor(cSetMenuColors[3]);
     ofDrawBitmapString("bp_thresh: " + ofToString(bp_thresh,0),0,0);
     glTranslatef(0,15,0);
-    ofSetColor(cSetMenuColors[4]);
+    ofSetHexColor(cSetMenuColors[4]);
     ofDrawBitmapString("erode: " + ofToString(erode, 0),0,0);
     glTranslatef(0,15,0);
-    ofSetColor(cSetMenuColors[5]);
+    ofSetHexColor(cSetMenuColors[5]);
     ofDrawBitmapString("dilate: " + ofToString(dilate, 0),0,0);
     glTranslatef(0,15,0);
-    ofSetColor(cSetMenuColors[6]);
+    ofSetHexColor(cSetMenuColors[6]);
     ofDrawBitmapString("gauss: " + ofToString(gauss, 0),0,0);
     glTranslatef(0,15,0);
-    ofSetColor(cSetMenuColors[7]);
+    ofSetHexColor(cSetMenuColors[7]);
     ofDrawBitmapString("lower_vthresh: " + ofToString(thresh_v[0], 0),0,0);
     glTranslatef(0,15,0);
-    ofSetColor(cSetMenuColors[8]);
+    ofSetHexColor(cSetMenuColors[8]);
     ofDrawBitmapString("upper_vthresh: " + ofToString(thresh_v[1], 0),0,0);
     glTranslatef(0,15,0);
-    ofSetColor(cSetMenuColors[9]);
+    ofSetHexColor(cSetMenuColors[9]);
     ofDrawBitmapString("enabled: " + ofToString(enabled, 0),0,0);
 
 
