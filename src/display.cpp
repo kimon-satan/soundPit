@@ -66,29 +66,15 @@ void display::draw(trackingObject t_objs[][10],vector<collision>* collisions, fl
 		if(transRects->at(tr).count > 15){
 
 			isTransforming[tr] = true;
-			ofEnableAlphaBlending();
-
-			float tr_alpha = transRects->at(tr).count * 2;
-			if(transRects->at(tr).col == 0)ofSetColor(238,59,59,tr_alpha); // red
-			if(transRects->at(tr).col == 1)ofSetColor(30,144,255,tr_alpha); // blue
-			if(transRects->at(tr).col == 2)ofSetColor(255,255,0,tr_alpha); //yellow
-			if(transRects->at(tr).col == 3)ofSetColor(34,139,34,tr_alpha); // green
-
-			ofFill();
-			ofSetRectMode(OF_RECTMODE_CENTER);
-			ofRect(transRects->at(tr).rect.x , transRects->at(tr).rect.y,
-				   transRects->at(tr).rect.width ,transRects->at(tr).rect.height);
-			ofSetRectMode(OF_RECTMODE_CORNER);
-
-			ofDisableAlphaBlending();
 
 			for(int i = 0; i <10; i++){
 				if(t_objs[transRects->at(tr).col][i].present){
+
 					drawObj(&t_objs[transRects->at(tr).col][i],transRects->at(tr).col, tr);
 
-					ofSetHexColor(0xFF3E96);
+					/*ofSetHexColor(0xFF3E96);
 					ofLine(transRects->at(tr).rect.x, transRects->at(tr).rect.y,
-						   t_objs[transRects->at(tr).col][i].avPos.x , t_objs[transRects->at(tr).col][i].avPos.y);
+						   t_objs[transRects->at(tr).col][i].avPos.x , t_objs[transRects->at(tr).col][i].avPos.y);*/
 
 				}
 			}
@@ -99,23 +85,6 @@ void display::draw(trackingObject t_objs[][10],vector<collision>* collisions, fl
 	ofSetColor(255, 255, 255);
 	ofNoFill();
 
-	ofSetRectMode(OF_RECTMODE_CENTER);
-	for(int i = 0; i < 4; i ++){
-
-		if(!isTransforming[i]){
-		ofEnableAlphaBlending();
-		ofSetColor(255, 255, 255, 150);
-
-
-		buttons[i].draw(transRects->at(i).rect.x ,
-						 transRects->at(i).rect.y ,
-						 transRects->at(i).rect.width, transRects->at(i).rect.height);
-		ofDisableAlphaBlending();
-		}
-
-		ofRect(transRects->at(i).rect.x, transRects->at(i).rect.y, transRects->at(i).rect.width, transRects->at(i).rect.height);
-	}
-	ofSetRectMode(OF_RECTMODE_CORNER);
 
 
     for(int col = 0; col < 4; col ++){

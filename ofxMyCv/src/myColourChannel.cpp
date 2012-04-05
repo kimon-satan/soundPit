@@ -13,7 +13,7 @@ myColourChannel::myColourChannel()
     h_bins = 30; s_bins =32;
 	int hist_size[] = {h_bins, s_bins };
 	h_ranges[0] = 0; h_ranges[1] = 180;
-    s_ranges[0] = 0; s_ranges[1] = 255;
+    s_ranges[0] = 0; s_ranges[1] = 256;
 
     float * ranges[] = {h_ranges, s_ranges};
 
@@ -148,7 +148,7 @@ void myColourChannel::setHistFromSample(IplImage* sample, CvRect selection){
    // cvThreshHist(histograms[selectedHist],3.0);
     float max_value = 0;
     cvGetMinMaxHistValue(histograms[selectedHist], 0, &max_value, 0, 0);
-    cvConvertScale( histograms[selectedHist]->bins, histograms[selectedHist]->bins, max_value ? 256. / max_value : 0., 0 );
+    cvConvertScale( histograms[selectedHist]->bins, histograms[selectedHist]->bins,(max_value > 0) ? 256. / max_value : 0., 0 );
 
     cvResetImageROI(sample_h);
     cvResetImageROI(sample_s);
@@ -198,7 +198,7 @@ void myColourChannel::backProject(IplImage* vid_hsv){
                    v_mask);
 
 
-        cvThreshold(v_mask, v_mask, 1.0,255, CV_THRESH_BINARY);
+        cvThreshold(v_mask, v_mask, 1.0,256, CV_THRESH_BINARY);
 
 
         for(int j = 0; j < histograms.size(); j++){
@@ -209,8 +209,8 @@ void myColourChannel::backProject(IplImage* vid_hsv){
                 }
 
         cvMul(vid_bp, v_mask, vid_bp, 1.0 );
-        //if(erode!= 0)cvErode(vid_bp, vid_bp, CV_SHAPE_RECT, erode);
-        //if(dilate != 0)cvDilate(vid_bp, vid_bp, CV_SHAPE_RECT, dilate);
+        if(erode!= 0)cvErode(vid_bp, vid_bp, NULL, erode);
+        if(dilate != 0)cvDilate(vid_bp, vid_bp, NULL, dilate);
         cvSmooth(vid_bp, vid_bp,CV_GAUSSIAN,gauss,gauss);
 
 		vMaskDisp = v_mask;

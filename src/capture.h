@@ -5,7 +5,6 @@
 #include "ofxOpenCv.h"
 #include "ofxXmlSettings.h"
 #include "ofxCvMyCv.h"
-//#include "ofxVectorMath.h"
 #include "ofxMyVec2f.h"
 #include "trackingObject.h"
 #include <iostream>
@@ -46,6 +45,8 @@ class capture : public myUtilities
 	void windowResized(int w, int h);
 
     myCvmask* getMasker();
+
+    void startLearnBg();
 
     protected:
     private:

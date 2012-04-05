@@ -546,11 +546,9 @@ void capture::saveHistograms(string fileName){
 
 				for(int hist = 0; hist < colChannels[chan].num_hists; hist ++){
 
-					string histName = "HIST";
-					histName.append(ofToString(hist, 0));
-					tagNum = XML.addTag(histName);
+					tagNum = XML.addTag("HIST");
 
-					if(XML.pushTag(histName, tagNum)){
+					if(XML.pushTag("HIST", tagNum)){
 
 						for(int h = 0; h < colChannels[chan].h_bins; h ++){
 
@@ -611,15 +609,11 @@ void capture::openHistograms(string fileName){
 					colChannels[chan].thresh_v[0] = XML.getValue("THRESH_V0", 0.0f);
 					colChannels[chan].thresh_v[1] = XML.getValue("THRESH_V1", 0.0f);
 
-					float num_hists = XML.getValue("NUMHISTS", 0.0f);
-
+					int num_hists = XML.getValue("NUMHISTS", 0);
 
 					for(int hist = 0; hist < num_hists; hist ++){
 
-						string histName = "HIST";
-						histName.append(ofToString(hist, 0));
-
-						if(XML.pushTag(histName, 0)){
+						if(XML.pushTag("HIST", hist)){
 
 							int tagNum = 0;
 
@@ -629,7 +623,11 @@ void capture::openHistograms(string fileName){
 
 
 									if(XML.pushTag("BIN_VAL", tagNum)){
-										cvSetReal2D((colChannels[chan].histograms[hist])->bins, h, s, XML.getValue("V", 0.0f));
+										float v = XML.getValue("V", 0.0f);
+										if(v > 0){
+										    cout << v << endl;
+										}
+										cvSetReal2D((colChannels[chan].histograms[hist])->bins, h, s, v);
 										tagNum ++;
 										XML.popTag();
 									}
@@ -917,7 +915,11 @@ void capture::windowResized(int w, int h){
 
 }
 
+void capture::startLearnBg(){
 
+learnBg =true;
+
+}
 
 
 capture::~capture()

@@ -23,7 +23,7 @@ struct collision{
 
 struct patch{
 
-	ofRectangle rect;
+	ofVec2f pos;
 	int count;
 	int col;
 	int isLive;
@@ -43,6 +43,7 @@ public:
 	void sendInitialise();
 	void saveConfig(ofxXmlSettings XML, int tagNum);
 	void openConfig(ofxXmlSettings XML);
+	void checkForInit();
 	void drawMenus();
 	void draw(trackingObject t_objs[][10], int size);
 	void keyPressed(int key);
@@ -55,11 +56,13 @@ protected:
 private:
 
     ofxOscSender sender;
-
+    ofxOscReceiver rec;
+    bool initialized;
     float collDist, collSpeedThresh;
     int synthsRunning;
     int maxSynths;
     int speed_scale;
+    int stillCount, stillTarget;
     vector<int> collisionsRunning;
     int maxCollisions;
     bool movingArray[4][10];

@@ -4,6 +4,7 @@ interpreter::interpreter()
 {
 
 	sender.setup( HOST, PORT );
+	rec.setup(20000);
 
 	for(int col = 0; col < 4; col ++){
 		vector<bool> temp;
@@ -27,7 +28,29 @@ interpreter::interpreter()
 	synthsRunning = 0;
 	speed_scale = 15;
 
+	initialized = false;
 
+}
+
+void interpreter::checkForInit(){
+
+    if(rec.hasWaitingMessages()){
+
+        ofxOscMessage m;
+		rec.getNextMessage( &m );
+
+		// check for mouse moved message
+		if ( m.getAddress() == "/port" )
+		{
+			// both the arguments are int32's
+			int t_port = m.getArgAsInt32( 0 );
+			sender.setup(HOST, t_port);
+			initialized = true;
+			sendInitialise();
+
+		}
+
+	}
 
 }
 
@@ -37,6 +60,8 @@ void interpreter::sendInitialise(){
 	m.setAddress( "/init" );
 	sender.sendMessage(m);
 	m.clear();
+
+
 
 }
 
@@ -56,34 +81,97 @@ void interpreter::setTrPtrs(vector<patch> * pnt_ptr, vector<int>* md_ptr){
 
 void interpreter::feedObjects(trackingObject t_objs[][10], int size, bool newFrame){
 
-
-
-
-
 	bool isStill = true;
+    int colCount[4] = {0,0,0,0};
 
 	for(int col = 0; col < 4; col ++)
 	{
 
-		for(int i = 0; i < 10; i ++)if(t_objs[col][i].present && t_objs[col][i].moving)isStill = false;
+		for(int i = 0; i < 10; i ++){
+		    if(t_objs[col][i].present){
+
+                colCount[col] += 1;
+
+                if(t_objs[col][i].moving){
+                    isStill = false;
+                    stillCount = 0;
+                }
+		    }
+		}
 
 	}
 
-	if(!isStill)for(int col = 0; col < 4; col ++)isTransforming[col] = false; // meaning only one transformation per col per still moment
+    if(isStill){
 
-	for(int tr = 0; tr < 4; tr++){
-		transRects->at(tr).isFilled = false;
+        if(stillCount == 0)stillTarget = ofRandom(150,900);
 
-	}
+        if(stillCount == stillTarget){
 
+            int sel = 0;
+            int t_count = 0;
+
+            for(int i = 0; i < 4; i++){
+
+                if(colCount[i] > t_count){
+                    sel = i; t_count = colCount[i];
+                }
+            }
+
+            if(colCount[sel] >= 3){ // no changes when less than three of any colour
+
+                //changes sound set + plays transforming sound
+                colTrs[sel] = (colTrs[sel]+1)%4; //simple increment for time being
+
+
+                isTransforming[sel] = true;
+                transRects->at(colTrs[sel]).isLive = 46;
+                colMode->at(sel) = colTrs[sel];
+                transRects->at(colTrs[sel]).count = 90;
+                transRects->at(colTrs[sel]).col = sel;
+
+                ofxOscMessage m;
+                m.setAddress( "/transformOn" );
+                m.addIntArg(sel);
+                m.addIntArg(colTrs[sel]);
+                sender.sendMessage(m);
+                m.clear();
+
+                //turnoff any current moving synths for that colour
+                for(int st = 0; st < 10; st ++){
+
+                    if(movingArray[sel][st]){
+
+                        movingArray[sel][st] = false;
+                        synthsRunning -= 1;
+
+                        ofxOscMessage m;
+                        m.setAddress( "/still" );
+                        m.addIntArg(sel);
+                        m.addIntArg(st);
+
+                        sender.sendMessage(m);
+                        m.clear();
+
+                    }
+                }//st
+
+
+            }
+
+
+
+            stillCount += 1; //can only trigger once per still time
+        }else{
+            stillCount += 1;
+        }
+
+    }
 
 
 	for(int col = 0; col < 4; col ++)
 	{
-
 		for(int i = 0; i < 10; i ++)
 		{
-
 			nowCollisions[col][i]=false;
 
 			if(t_objs[col][i].present)
@@ -92,74 +180,9 @@ void interpreter::feedObjects(trackingObject t_objs[][10], int size, bool newFra
 				if(newFrame)t_objs[col][i].updateHistory();
 				t_objs[col][i].updateDrawHistory();
 
-				if(!t_objs[col][i].moving && isStill)
-				{
-
-					ofPoint avPos = ofPoint(t_objs[col][i].avPos.x, t_objs[col][i].avPos.y);
-
-					for(int tr = 0; tr < 4; tr++)
-					{
-
-						if(
-						   (avPos.x > transRects->at(tr).rect.x - (transRects->at(tr).rect.width/2)
-							&& avPos.x < transRects->at(tr).rect.x + (transRects->at(tr).rect.width/2))&&
-						   (avPos.y > transRects->at(tr).rect.y  - (transRects->at(tr).rect.height/2) &&
-							avPos.y < transRects->at(tr).rect.y + (transRects->at(tr).rect.height/2))
-						   ){
-
-							transRects->at(tr).isFilled = true;
-
-							if(transRects->at(tr).isLive == 45 && colTrs[col] != tr && !isTransforming[col]){
-
-								colTrs[col] = tr;
-								isTransforming[col] = true;
-								transRects->at(tr).isLive = 46;
-								colMode->at(col) = tr;
-								transRects->at(tr).count = 90;
-								transRects->at(tr).col = col;
-
-								//changes sound set + plays transforming sound
-								ofxOscMessage m;
-								m.setAddress( "/transformOn" );
-								m.addIntArg(col);
-								m.addIntArg(tr);
-								sender.sendMessage(m);
-								m.clear();
-
-								//turnoff any current moving synths for that colour
-								for(int st = 0; st < 10; st ++){
-
-									if(movingArray[col][st]){
-
-										movingArray[col][st] = false;
-										synthsRunning -= 1;
-
-										ofxOscMessage m;
-										m.setAddress( "/still" );
-										m.addIntArg(col);
-										m.addIntArg(st);
-
-										sender.sendMessage(m);
-										m.clear();
-
-									}
-								}//st
-
-
-
-							}else if(transRects->at(tr).isLive < 45 && colTrs[col] != tr && !isTransforming[col]){
-
-								transRects->at(tr).isLive = transRects->at(tr).isLive + 1;
-
-							}
-
-						}//if inside
-					}//tr
-				} //moving
 			} //present
 		} //i
 	}	//col
-
 
 
 	if(newFrame){
@@ -285,9 +308,10 @@ void interpreter::feedObjects(trackingObject t_objs[][10], int size, bool newFra
 
 			if(transRects->at(tr).count > 0){
 				transRects->at(tr).count -= 1;
+			}else{
+                isTransforming[transRects->at(tr).col] = false;
 			}
 
-			if(!transRects->at(tr).isFilled)transRects->at(tr).isLive = 0;
 		}
 
 
@@ -405,25 +429,6 @@ void interpreter::draw(trackingObject t_objs[][10], int size){
 
 	for(int col = 0; col < 4; col++){
 
-		if(transRects->at(col).count > 0){
-
-			ofEnableAlphaBlending();
-
-			float alpha = transRects->at(col).count * 2;
-			if(transRects->at(col).col == 0)ofSetColor(238,59,59,alpha); // red
-			if(transRects->at(col).col == 1)ofSetColor(30,144,255,alpha); // blue
-			if(transRects->at(col).col == 2)ofSetColor(255,255,0,alpha); //yellow
-			if(transRects->at(col).col == 3)ofSetColor(34,139,34,alpha); // green
-
-
-			ofSetRectMode(OF_RECTMODE_CENTER);
-			ofRect(transRects->at(col).rect.x * 6, (50 - transRects->at(col).rect.y) * 6,
-				   transRects->at(col).rect.width * 6 ,transRects->at(col).rect.height * 6);
-			ofSetRectMode(OF_RECTMODE_CORNER);
-
-			ofDisableAlphaBlending();
-
-		}
 
 		trackedString = trackedString + "\n\n" + "colour: " + ofToString(col);
 
@@ -480,13 +485,6 @@ void interpreter::draw(trackingObject t_objs[][10], int size){
 	ofNoFill();
 	ofRect(0,0,300,300);
 
-	ofSetRectMode(OF_RECTMODE_CENTER);
-	for(int r = 0; r < 4; r ++){
-		ofRect(transRects->at(r).rect.x * 6, (50 - transRects->at(r).rect.y) * 6,
-			   transRects->at(r).rect.width * 6, transRects->at(r).rect.height * 6);
-	}
-	ofSetRectMode(OF_RECTMODE_CORNER);
-
 
 	ofFill();
 
@@ -521,9 +519,9 @@ void interpreter::openConfig(ofxXmlSettings XML){
 
 	if( XML.pushTag("INTERPRETER", 0) ){
 
-		collDist  = XML.getValue("COLLDIST", 0);
+		collDist  = XML.getValue("COLLDIST", 1.0f);
 		maxSynths = XML.getValue("MAXSYNTHS", 0);
-		maxCollisions = XML.getValue("MAXCOLLISIONS",0);
+		maxCollisions = XML.getValue("MAXCOLL",0);
 		speed_scale = XML.getValue("SPEEDSCALE", 10.0f);
 		collSpeedThresh = XML.getValue("COLLSPEEDTHRESH",5.0f);
 

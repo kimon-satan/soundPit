@@ -183,39 +183,7 @@ void filterProjector::drawMenus(myCvmask *masker){
 
 	glPopMatrix();
 
-	glPushMatrix();
 
-    glTranslatef(width*2 + 25,420,0);
-
-    glTranslatef(0,15,0);
-    if(selectedMenu == 2){ofSetHexColor(0x00ffff);}else{ofSetHexColor(0xffffff);}
-    ofDrawBitmapString("TransRects:",0,0);
-
-    int transMenuColors[5];
-
-    for(int i = 0; i < 5; i++){
-
-		if(selectedItem == i && selectedMenu == 2){
-			transMenuColors[i] = 0xff0000;
-		}else{transMenuColors[i] = 0xffffff;}
-
-    }
-
-	for(int i = 0; i < 4; i++){
-    ofSetHexColor(transMenuColors[i]);
-    glTranslatef(0,15,0);
-    ofDrawBitmapString("rect" + ofToString(i, 0) + ": " + ofToString(transRects->at(i).rect.x, 1) + ","
-                       + ofToString(transRects->at(i).rect.y, 1),0,0);
-
-	}
-
-	ofSetHexColor(transMenuColors[4]);
-	glTranslatef(0,30,0);
-    ofDrawBitmapString("transSize: " + ofToString(transRects->at(0).rect.width,0),0,0);
-
-	ofSetColor(255,255,255);
-
-	glPopMatrix();
 
 
 
@@ -313,12 +281,6 @@ void filterProjector::draw3DFrame(){
 	glTranslatef(-25,-25,0);
 	ofSetColor(255,255,255);
 
-	ofSetRectMode(OF_RECTMODE_CENTER);
-	for(int i = 0; i < 4; i ++){
-		ofRect(transRects->at(i).rect.x, transRects->at(i).rect.y, transRects->at(i).rect.width, transRects->at(i).rect.height);
-	}
-	ofSetRectMode(OF_RECTMODE_CORNER);
-
 	ofCircle(25,25,1);
 
 	ofRect(0,0,50,50);
@@ -396,20 +358,6 @@ void filterProjector::keyPressed(int key, myCvmask *masker){
 
             }
 
-			if(selectedMenu ==2){
-
-				if(selectedItem < 4){
-
-					transRects->at(selectedItem).rect.y += 0.25;
-
-				}else{
-					for(int i = 0; i < 4; i++){
-						transRects->at(i).rect.width += 0.25;
-						transRects->at(i).rect.height += 0.25;
-					}
-				}
-			}
-
 
 			break;
 
@@ -428,19 +376,6 @@ void filterProjector::keyPressed(int key, myCvmask *masker){
                 masker->setCoordinate(selectedItem, temp);
             }
 
-			if(selectedMenu ==2){
-
-				if(selectedItem < 4){
-
-					transRects->at(selectedItem).rect.y -= 0.25;
-
-				}else{
-					for(int i = 0; i < 4; i++){
-						transRects->at(i).rect.width -= 0.25;
-						transRects->at(i).rect.height -= 0.25;
-					}
-				}
-			}
 
 			break;
 
@@ -453,11 +388,6 @@ void filterProjector::keyPressed(int key, myCvmask *masker){
                 masker->setCoordinate(selectedItem, temp);
             }
 
-			if(selectedMenu ==2){
-
-				if(selectedItem < 4)transRects->at(selectedItem).rect.x -= 1;
-
-			}
 			break;
 
         case OF_KEY_RIGHT:
@@ -468,11 +398,7 @@ void filterProjector::keyPressed(int key, myCvmask *masker){
                 masker->setCoordinate(selectedItem, temp);
             }
 
-			if(selectedMenu ==2){
 
-				if(selectedItem < 4)transRects->at(selectedItem).rect.x += 1;
-
-			}
 			break;
 
     }
