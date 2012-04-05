@@ -10,6 +10,7 @@
 #include "trackingObject.h"
 #include "interpreter.h"
 #include "display.h"
+#include "myCamera.h"
 
 
 class interface : public ofBaseApp{

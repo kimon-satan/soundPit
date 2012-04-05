@@ -168,6 +168,12 @@
 		<Unit filename="src/main.cpp">
 			<Option virtualFolder="src/" />
 		</Unit>
+		<Unit filename="src/myCamera.cpp">
+			<Option virtualFolder="src/" />
+		</Unit>
+		<Unit filename="src/myCamera.h">
+			<Option virtualFolder="src/" />
+		</Unit>
 		<Unit filename="src/trackingObject.cpp">
 			<Option virtualFolder="src/" />
 		</Unit>

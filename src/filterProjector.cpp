@@ -193,6 +193,8 @@ void filterProjector::draw(trackingObject t_objs[][10], int size){
 
 
     ofDrawBitmapString(colBlobString, 20,260);
+    drawNewFrame();
+
     draw3DMask();
     reshape(width,ofGetHeight()-height,width,height);
     draw3DFrame();
@@ -261,6 +263,22 @@ void filterProjector::draw3DMask(){
 
 	glEnable(GL_BLEND); glDisable(GL_DEPTH_TEST);
 
+}
+
+void filterProjector::drawNewFrame(){
+
+    ofRectangle r(320,0,320,240);
+    ofNoFill();
+    ofRect(r);
+    cam.begin(r);
+        ofPushStyle();
+            ofSetRectMode(OF_RECTMODE_CENTER);
+            ofNoFill();
+            ofSetColor(255);
+            ofRect(0,0,50,50);
+            ofCircle(0,0,1);
+        ofPopStyle();
+    cam.end();
 }
 
 void filterProjector::draw3DFrame(){
