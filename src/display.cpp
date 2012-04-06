@@ -8,8 +8,8 @@ display::display(){
 	alpha = 100;
 	x_overlap = 3.0f;
 	y_overlap = 3.0f;
-	displayRect.set(1300,0,3.0f,3.0f);
-	monitorRect.set(320,0,2.0f,2.0f);
+	displayRect.set(0,0,640.0f,480.0f);
+	monitorRect.set(320,0,640.0f,480.0f);
 
 	buttons[0].loadImage("images/xenakis3.png");
 	buttons[1].loadImage("images/stock4.png");
@@ -24,40 +24,21 @@ void display::setTrPtrs(vector<patch> * pnt_ptr, vector<int>* md_ptr){
 
 }
 
-void display::draw(trackingObject t_objs[][10],vector<collision>* collisions, float maskArray[], vector<int>*colModes, bool disp){
+void display::draw(trackingObject t_objs[][10],vector<collision>* collisions, myCamera t_cam, vector<int>*colModes, bool disp){
 
-    ofPushStyle();
-    ofNoFill();
+
     ofRectangle dimensions;
 
     if(disp){dimensions = displayRect;} else{ dimensions = monitorRect;}
 
+    t_cam.begin(dimensions);
 
-    GLfloat prop = (GLfloat)(dimensions.width *320.0f)/(GLfloat)(dimensions.height * 240.0f);
-
-    float x = dimensions.x + (maskArray[7] * dimensions.width) - (80 * dimensions.width);
-    float y = ofGetHeight() - (dimensions.y + (240 * dimensions.height));
-    y += (maskArray[8] * dimensions.height);
-    y -= 60 * dimensions.height;
-
-    glMatrixMode(GL_VIEWPORT);
-    glLoadIdentity();
-    glViewport( x,y, 320 * dimensions.width *1.5, 240 * dimensions.height * 1.5);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective (45.0, prop,1.0, 400.0);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glPushMatrix();
-
-    glTranslated(maskArray[0], maskArray[1], maskArray[2]);
-    glRotated(maskArray[3], 1, 0, 0);
-    glRotated(maskArray[4], 0, 1, 0);
-    glRotated(maskArray[5], 0, 0, 1);
-
-    glTranslatef(-25,-25,0);
-    ofSetColor(255,255,255);
-    ofRect(0,0,50,50);
+        ofPushStyle();
+            ofNoFill();
+            ofSetColor(255);
+            ofRect(0,0,50,50);
+            ofCircle(25,25,1);
+        ofPopStyle();
 
 	bool isTransforming[4] = {false,false,false,false};
 
@@ -115,10 +96,7 @@ void display::draw(trackingObject t_objs[][10],vector<collision>* collisions, fl
     }
 
 
-    glPopMatrix();
-    ofPopStyle();
-
-    ofSetColor(255,255,255);
+    t_cam.end();
 
 
 }
@@ -146,11 +124,11 @@ void display::drawObj(trackingObject * t_obj, int col, int colMode){
 	if(col == 2)ofSetColor(255,255,0,alpha); //yellow
 	if(col == 3)ofSetColor(34,139,34,alpha); //green
 
-	ofCircle(x,y,radius);
+	ofCircle(x,y,0.5,radius);
 	ofNoFill();
 
 	ofDisableAlphaBlending();
-
+    ofPushStyle();
 	ofSetLineWidth(lineWidth);
 	ofSetHexColor(0x00ffff);
 	ofCircle(x,y,radius);
@@ -159,6 +137,7 @@ void display::drawObj(trackingObject * t_obj, int col, int colMode){
 	glRotatef(t_obj->true_direction, 0,0,1);
 	ofLine(0 - radius * x_overlap,0,0 + radius * x_overlap,0);
 	ofLine(0, 0 - radius * y_overlap, 0, 0 + radius * y_overlap);
+	ofPopStyle();
 	glPopMatrix();
 
 }
@@ -268,8 +247,11 @@ void display::keyPressed(int key){
 
 				if(selectedItem == 0)displayRect.x += 1;
 				if(selectedItem == 1)displayRect.y += 1;
-				if(selectedItem == 2)displayRect.width += 0.01;
-				if(selectedItem == 3)displayRect.height += 0.01;
+				if(selectedItem >= 2){
+				    displayRect.width *= 1.01;
+				    displayRect.height *=1.01;
+				}
+
 
 			}
 
@@ -290,8 +272,11 @@ void display::keyPressed(int key){
 
 				if(selectedItem == 0)displayRect.x -= 1;
 				if(selectedItem == 1)displayRect.y -= 1;
-				if(selectedItem == 2)displayRect.width -= 0.01;
-				if(selectedItem == 3)displayRect.height -= 0.01;
+				if(selectedItem >= 2){
+				    displayRect.width *= 0.99;
+				    displayRect.height *= 0.99;
+				}
+
 
 			}
 			break;

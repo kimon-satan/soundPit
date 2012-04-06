@@ -3,10 +3,8 @@
 filterProjector::filterProjector()
 {
 
-
     width = 320;
     height = 240;
-
 
 }
 
@@ -80,7 +78,6 @@ void filterProjector::draw3DBlobs(trackingObject t_objs[][10], int size){
 
 			if(t_objs[col][i].present)ofRect(x-1.5f, y-1.5f,3,3);
 
-
 		}
 	}
 
@@ -93,10 +90,21 @@ void filterProjector::openConfig(ofxXmlSettings XML){
 
 	if( XML.pushTag("FILTERPROJECTOR", 0) ){
 
-		if( XML.pushTag("MASK", 0) ){
-			for(int i =0; i < 9; i++){
-//				maskArray[i] = XML.getValue("MASKARRAY",0, i);
-			}
+        if( XML.pushTag("CAM", 0) ){
+
+            ofVec3f pos;
+            pos.x = XML.getValue("POS_X",0.0f);
+            pos.y = XML.getValue("POS_Y",0.0f);
+            pos.z = XML.getValue("POS_Z",0.0f);
+
+            ofVec3f eul;
+            eul.x = XML.getValue("EUL_X",0.0f);
+            eul.y = XML.getValue("EUL_Y",0.0f);
+            eul.z = XML.getValue("EUL_Z",0.0f);
+
+            cam.setPosition(pos);
+            cam.setOrientation(eul);
+
 			XML.popTag();
 		}
 		XML.popTag();
@@ -110,11 +118,19 @@ void filterProjector::saveConfig(ofxXmlSettings XML, int tagNum){
 	tagNum	= XML.addTag("FILTERPROJECTOR");
 	if( XML.pushTag("FILTERPROJECTOR", tagNum) ){
 
-		tagNum	= XML.addTag("MASK");
-		if( XML.pushTag("MASK", tagNum) ){
-			for(int i =0; i < 9; i++){
-				//XML.setValue("MASKARRAY",maskArray[i],tagNum+i);
-			}
+		tagNum	= XML.addTag("CAM");
+		if( XML.pushTag("CAM", tagNum) ){
+
+            ofVec3f pos(cam.getPosition());
+            XML.setValue("POS_X",pos.x);
+            XML.setValue("POS_Y",pos.y);
+            XML.setValue("POS_Z",pos.z);
+
+            ofVec3f eul(cam.getOrientationEuler());
+            XML.setValue("EUL_X",eul.z);
+            XML.setValue("EUL_Y",eul.y);
+            XML.setValue("EUL_Z",eul.x); //for some reason - angles are returned in wrong order ?
+
 			XML.popTag();
 		}
 		XML.popTag();
@@ -301,6 +317,7 @@ void filterProjector::drawMenus(myCvmask *masker){
 
 }
 
+myCamera filterProjector::getCam(){return cam;}
 
 filterProjector::~filterProjector()
 {

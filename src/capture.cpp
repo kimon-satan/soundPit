@@ -11,12 +11,14 @@ capture::capture()
     height = 240;
     learningBg = 30;
 
-	ofSetFrameRate(32);
+	ofSetFrameRate(30);
 
     //vidGrabber.setVerbose(true);
     //vidGrabber.setDeviceID(1);
-    vidGrabber.initGrabber(width,height);
+    vidGrabber.initGrabber(640,480);
 
+
+    bigImg.allocate(640,480);
     vidImg.allocate(width,height);
     selectImg.allocate(width,height);
     zoomSelectImg.allocate(width,height);
@@ -93,7 +95,11 @@ bool capture::update(trackingObject t_objs[][10] , int size){
 
 	if(learnImage){
 		if(bNewFrame){
-            selectImg.setFromPixels(vidGrabber.getPixels(), 320,240);
+		    selectImg.clear();
+		    selectImg.allocate(640,480);
+            selectImg.setFromPixels(vidGrabber.getPixels(), 640,480);
+            selectImg.resize(320,240);
+            selectImg.flagImageChanged();
             //cvEqualizeHist(selectImg, selectImg);
             createZimg();
             learnImage = false;
@@ -113,7 +119,10 @@ bool capture::update(trackingObject t_objs[][10] , int size){
 
         if(learningBg > 0)learningBg-=1;
 
-        vidImg.setFromPixels(vidGrabber.getPixels(), 320,240);
+        bigImg.setFromPixels(vidGrabber.getPixels(), 640,480);
+        vidImg.allocate(640,480);
+        vidImg = bigImg;
+        vidImg.resize(320,240);
         maskedImg = masker.getMask(vidImg.getCvImage());
 
         if(learnBg){
@@ -515,7 +524,7 @@ void capture::drawCap(int x, int y){
 void capture::drawCap(int x, int y, int w, int h){
 
 	ofSetColor(255,255,255);
-	vidImg.draw(x,y,w,h);
+	bigImg.draw(x,y,w,h);
 
 }
 

@@ -2,7 +2,7 @@
 #define DISPLAY_H
 
 #include "ofMain.h"
-//#include "ofxVectorMath.h"
+#include "myCamera.h"
 #include"trackingObject.h"
 #include "interpreter.h"
 
@@ -12,7 +12,7 @@ class display
 public:
 	display();
 
-	void draw(trackingObject t_objs[][10],vector<collision>* collisions, float maskArray[], vector<int>* colModes, bool disp);
+	void draw(trackingObject t_objs[][10],vector<collision>* collisions, myCamera t_cam, vector<int>* colModes, bool disp);
 	void drawMenus();
 	void keyPressed(int key);
 	virtual ~display();

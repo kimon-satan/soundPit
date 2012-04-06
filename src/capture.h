@@ -58,7 +58,7 @@ class capture : public myUtilities
 
 	ofxCvColorImage		selectImg;
 	ofxCvColorImage     zoomSelectImg;
-	ofxCvColorImage     vidImg;
+	ofxCvColorImage     vidImg, bigImg;
 
     bgSegmenter bgSeg;
     myCvmask masker;

@@ -23,6 +23,8 @@ public:
 	void saveConfig(ofxXmlSettings XML, int tagNum);
 	void openConfig(ofxXmlSettings XML);
 
+	myCamera getCam();
+
 	void keyPressed  (int key, myCvmask * masker);
 	void mouseMoved(int x, int y );
 	void mouseDragged(int x, int y, int button);

@@ -32,9 +32,10 @@ void interface::setup(){
 
 	fileOp = -1;
 
-	//thisFP.setTrPtrs(&transRects);
 	thisInterp.setTrPtrs(&transRects, &colMode);
 	thisDisplay.setTrPtrs(&transRects, &colMode);
+
+	viewMode = 0;
 
 
 
@@ -55,6 +56,8 @@ void interface::update(){
 
         openConfig("default.xml");
         thisCapture.openHistograms("default.xml");
+        displayOn = true;
+        ofToggleFullscreen();
 	    thisCapture.startLearnBg();
 
     } //for auto initialisation
@@ -66,34 +69,46 @@ void interface::draw(){
 
 
     if(displayOn){
-        thisCapture.drawCap(thisDisplay.displayRect.x,thisDisplay.displayRect.y,
-                            320 * thisDisplay.displayRect.width,
-                            240 * thisDisplay.displayRect.height);
+
+       thisFP.draw(t_objs, 4); //to make sure cam is set (definitely a better way to di this but I'm tired)
+
+       ofFill();
+       ofSetColor(0);
+       ofRect(0,0,ofGetScreenWidth(),ofGetScreenHeight());
+
+       thisCapture.drawCap(thisDisplay.displayRect.x,thisDisplay.displayRect.y,
+                            thisDisplay.displayRect.width,
+                            thisDisplay.displayRect.height);
+
+       thisDisplay.draw(t_objs,thisInterp.getCollisions(), thisFP.getCam() ,thisInterp.getColModes(), true);
+
+    }else{
+
+        switch (viewMode){
+
+            case 0:
+                thisCapture.draw(t_objs, 4);
+                break;
+
+            case 1:
+                thisCapture.drawCap(320,0);
+                thisFP.drawMenus(thisCapture.getMasker());
+                thisFP.draw(t_objs, 4);
+                break;
+
+            case 2:
+                thisInterp.drawMenus();
+                thisInterp.draw(t_objs, 4);
+                break;
+
+            case 3:
+                thisCapture.drawCap(320,0,640,480);
+                thisDisplay.draw(t_objs,thisInterp.getCollisions(), thisFP.getCam() ,thisInterp.getColModes(), false);
+                thisDisplay.drawMenus();
+                break;
+
+        }
     }
-
-
-	switch (viewMode){
-
-        case 0:
-			thisCapture.draw(t_objs, 4);
-			break;
-
-        case 1:
-			thisCapture.drawCap(320,0);
-			thisFP.drawMenus(thisCapture.getMasker());
-			break;
-
-        case 2:
-			thisInterp.drawMenus();
-			thisInterp.draw(t_objs, 4);
-			break;
-
-        case 3:
-			thisCapture.drawCap(320,0,640,480);
-			thisDisplay.drawMenus();
-			break;
-
-	}
 
 
 	if(fileNameInput.isActive){
@@ -116,32 +131,8 @@ void interface::draw(){
 		fileNameInput.draw();
 	}
 
-	switch (viewMode){
 
-        case 0:
-			//thisFP.draw3DMask();
-			break;
 
-        case 1:
-			thisFP.draw(t_objs, 4);
-			break;
-
-        case 2:
-			//thisFP.draw3DMask();
-			break;
-
-        case 3:
-			//thisFP.draw3DMask();
-			//thisDisplay.draw(t_objs, thisInterp.getCollisions(), thisFP.getMaskArray(), thisInterp.getColModes(), false);
-			break;
-
-	}
-
-	if(displayOn){
-
-       // thisDisplay.draw(t_objs,thisInterp.getCollisions(), thisFP.getMaskArray(),thisInterp.getColModes(), true);
-
-	}
 
 
 }
@@ -192,19 +183,28 @@ void interface::saveConfig(string fileName){
 //--------------------------------------------------------------
 void interface::keyPressed  (int key){
 
+    if(displayOn){
+        if(key == '"'){
+            displayOn = false;
+            ofToggleFullscreen();
+        }else if(key == ' '){
+            thisCapture.startLearnBg();
+        }else{
+            return;
+        }
+    }
+
 	if(!fileNameInput.isActive){
 
-		if(key == '1'){viewMode +=1; viewMode = viewMode%4;
+
+		if(key == '1'){
+
+		    viewMode +=1; viewMode = viewMode%4;
 
 		}else if(key == '2'){
 
-			if(displayOn){
-				displayOn =false;
-				ofToggleFullscreen();
-			}else{
-				displayOn = true;
-				ofToggleFullscreen();
-			}
+            displayOn = true;
+            ofToggleFullscreen();
 
 		}else if(key == '6'){fileOp = 0; fileNameInput.isActive = true;
 		}else if(key == '^'){fileOp = 1; fileNameInput.isActive = true;
@@ -219,7 +219,6 @@ void interface::keyPressed  (int key){
 				case 0:
 					thisCapture.keyPressed(key);
 					break;
-
 				case 1:
 					thisFP.keyPressed(key,thisCapture.getMasker());
 					break;
