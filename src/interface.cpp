@@ -32,7 +32,7 @@ void interface::setup(){
 
 	fileOp = -1;
 
-	thisFP.setTrPtrs(&transRects);
+	//thisFP.setTrPtrs(&transRects);
 	thisInterp.setTrPtrs(&transRects, &colMode);
 	thisDisplay.setTrPtrs(&transRects, &colMode);
 
@@ -64,7 +64,6 @@ void interface::update(){
 //--------------------------------------------------------------
 void interface::draw(){
 
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if(displayOn){
         thisCapture.drawCap(thisDisplay.displayRect.x,thisDisplay.displayRect.y,
@@ -120,7 +119,7 @@ void interface::draw(){
 	switch (viewMode){
 
         case 0:
-			thisFP.draw3DMask();
+			//thisFP.draw3DMask();
 			break;
 
         case 1:
@@ -128,19 +127,19 @@ void interface::draw(){
 			break;
 
         case 2:
-			thisFP.draw3DMask();
+			//thisFP.draw3DMask();
 			break;
 
         case 3:
-			thisFP.draw3DMask();
-			thisDisplay.draw(t_objs, thisInterp.getCollisions(), thisFP.getMaskArray(), thisInterp.getColModes(), false);
+			//thisFP.draw3DMask();
+			//thisDisplay.draw(t_objs, thisInterp.getCollisions(), thisFP.getMaskArray(), thisInterp.getColModes(), false);
 			break;
 
 	}
 
 	if(displayOn){
 
-        thisDisplay.draw(t_objs,thisInterp.getCollisions(), thisFP.getMaskArray(),thisInterp.getColModes(), true);
+       // thisDisplay.draw(t_objs,thisInterp.getCollisions(), thisFP.getMaskArray(),thisInterp.getColModes(), true);
 
 	}
 
@@ -323,7 +322,7 @@ void interface::mouseReleased(int x, int y, int button){
 //--------------------------------------------------------------
 void interface::windowResized(int w, int h){
 
-    thisFP.setProjChanged(true);
+
 
 }
 

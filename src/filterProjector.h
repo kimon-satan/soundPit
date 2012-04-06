@@ -17,19 +17,8 @@ public:
 
 	void feedRawBlobs(trackingObject t_objs[][10], int size);
 
-
-	void reshape(int x, int y, int w, int h);
-	void reload();
-	void drawFbo3DMask();
-	void draw3DMask();
-	void draw3DFrame();
-	void drawNewFrame();
 	void draw3DBlobs(trackingObject t_objs[][10], int size);
-	void setProjChanged(bool temp);
-	float* getMaskArray();
-	void setTrPtrs(vector<patch> * pnt_ptr);
-
-	void draw(trackingObject t_objs[][10], int size);
+    void draw(trackingObject t_objs[][10], int size);
 	void drawMenus(myCvmask *masker);
 	void saveConfig(ofxXmlSettings XML, int tagNum);
 	void openConfig(ofxXmlSettings XML);
@@ -49,19 +38,11 @@ private:
 	int width, height;
 	int selectedMenu;
 	int selectedItem;
-	bool projChanged;
 
-
-	float maskArray[9];
-	int projYdisplace;
-	GLint viewport[4];
-	GLdouble mvmatrix[16];
-	GLdouble projmatrix[16];
+	ofRectangle viewPort;
 
 	vector <vector<trackingObject> > blobs;
-
 	string colBlobString;
-	vector <patch>* transRects;
 
 };
 
