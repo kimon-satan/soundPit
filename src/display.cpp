@@ -11,20 +11,12 @@ display::display(){
 	displayRect.set(0,0,640.0f,480.0f);
 	monitorRect.set(320,0,640.0f,480.0f);
 
-	buttons[0].loadImage("images/xenakis3.png");
-	buttons[1].loadImage("images/stock4.png");
-	buttons[2].loadImage("images/varese2.png");
-	buttons[3].loadImage("images/exp1.png");
-}
-
-void display::setTrPtrs(vector<patch> * pnt_ptr, vector<int>* md_ptr){
-
-	transRects = pnt_ptr;
-	colMode = md_ptr;
 
 }
 
-void display::draw(trackingObject t_objs[][10],vector<collision>* collisions, myCamera t_cam, vector<int>*colModes, bool disp){
+void display::setTrPtrs(vector<patch> * pnt_ptr){transInfo = pnt_ptr;}
+
+void display::draw(trackingObject t_objs[][10],vector<collision>* collisions, myCamera t_cam, bool disp){
 
 
     ofRectangle dimensions;
@@ -40,22 +32,19 @@ void display::draw(trackingObject t_objs[][10],vector<collision>* collisions, my
             ofCircle(25,25,1);
         ofPopStyle();
 
-	bool isTransforming[4] = {false,false,false,false};
 
 	for(int tr = 0; tr < 4; tr++){
 
-		if(transRects->at(tr).count > 15){
-
-			isTransforming[tr] = true;
+		if(transInfo->at(tr).isActive){
 
 			for(int i = 0; i <10; i++){
-				if(t_objs[transRects->at(tr).col][i].present){
+				if(t_objs[tr][i].present){
 
-					drawObj(&t_objs[transRects->at(tr).col][i],transRects->at(tr).col, tr);
+					drawObj(&t_objs[tr][i],tr ,transInfo->at(tr).sampleGroup);
 
 					/*ofSetHexColor(0xFF3E96);
-					ofLine(transRects->at(tr).rect.x, transRects->at(tr).rect.y,
-						   t_objs[transRects->at(tr).col][i].avPos.x , t_objs[transRects->at(tr).col][i].avPos.y);*/
+					ofLine(transInfo->at(tr).rect.x, transInfo->at(tr).rect.y,
+						   t_objs[transInfo->at(tr).col][i].avPos.x , t_objs[transInfo->at(tr).col][i].avPos.y);*/
 
 				}
 			}
@@ -70,13 +59,13 @@ void display::draw(trackingObject t_objs[][10],vector<collision>* collisions, my
 
     for(int col = 0; col < 4; col ++){
 
-		if(!isTransforming[col]){
+		if(!transInfo->at(col).isActive){
 
 			for(int i = 0; i <10; i++){
 
 				if(t_objs[col][i].present && t_objs[col][i].moving){
 
-					drawObj(&t_objs[col][i], col, colModes->at(col));
+					drawObj(&t_objs[col][i], col, transInfo->at(col).sampleGroup);
 
 				}
 			}
@@ -106,10 +95,8 @@ void display::drawObj(trackingObject * t_obj, int col, int colMode){
 
 	ofEnableAlphaBlending();
 
-
 	float x = t_obj->avPos.x;
 	float y = t_obj->avPos.y;
-
 
 	ofFill();
 	ofSetColor(255,255,255,255);
@@ -328,6 +315,40 @@ void display::openConfig(ofxXmlSettings XML){
 
 
 		XML.popTag();
+
+    }
+
+}
+
+void display::setNumSampleGrps(int n){
+
+    numSampleGrps = n;
+    buttons.clear();
+
+    for(int i =0; i < 4; i ++){
+        ofImage t;
+        buttons.push_back(t);
+    }
+
+}
+
+void display::loadButtonImages(){
+
+    ofxXmlSettings XML;
+
+    if(XML.loadFile("imageList.xml")){
+
+        if(XML.pushTag("IMAGELIST", 0)){
+
+            for(int i = 0; i < XML.getNumTags("IMAGE"); i ++){
+
+                string fp = "images/" + XML.getValue("IMAGE", "", i);
+                buttons[i].loadImage(fp);
+
+            }
+
+            XML.popTag();
+        }
 
     }
 

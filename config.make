@@ -17,12 +17,12 @@ USER_CFLAGS = -I ofxMyCv/src -I ofxMyGui -I ofxMyVec2f/src
 # for example libraries like:
 # USER_LD_FLAGS = libs/libawesomelib.a
 
-USER_LDFLAGS =
+USER_LDFLAGS = 
 
 
 # use this to add system libraries for example:
 # USER_LIBS = -lpango
-
+ 
 USER_LIBS =
 
 

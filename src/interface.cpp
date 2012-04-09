@@ -1,5 +1,12 @@
 #include "interface.h"
 
+interface::interface(string t_filename){
+
+    filename = t_filename;
+    filename = filename + ".xml";
+
+}
+
 //--------------------------------------------------------------
 void interface::setup(){
 
@@ -18,34 +25,29 @@ void interface::setup(){
 	for(int i = 0; i < 4; i++){
 		patch temp;
 		temp.count = 0;
-		temp.isLive = 1;
-		temp.isFilled = false;
-		temp.col = 0;
+		temp.sampleGroup = 0;
+		temp.isActive = false;
 		transRects.push_back(temp);
-
-		int mode = 0;
-		colMode.push_back(mode);
-
 	}
 
 	fileNameInput.textArea = ofRectangle(500,500,200,40);
 
 	fileOp = -1;
 
-	thisInterp.setTrPtrs(&transRects, &colMode);
-	thisDisplay.setTrPtrs(&transRects, &colMode);
+	thisInterp.setTrPtrs(&transRects);
+	thisDisplay.setTrPtrs(&transRects);
 
 	viewMode = 0;
 
-
-
+    openConfig(filename);
+    thisCapture.openHistograms(filename);
 
 }
 
 //--------------------------------------------------------------
 void interface::update(){
 
-    thisInterp.checkForInit();
+    thisInterp.checkForHandshake();
 
 	bool newFrame = thisCapture.update(t_objs, 4);
 
@@ -54,8 +56,6 @@ void interface::update(){
 
 	if(ofGetFrameNum() == 60){
 
-        openConfig("default.xml");
-        thisCapture.openHistograms("default.xml");
         displayOn = true;
         ofToggleFullscreen();
 	    thisCapture.startLearnBg();
@@ -80,7 +80,7 @@ void interface::draw(){
                             thisDisplay.displayRect.width,
                             thisDisplay.displayRect.height);
 
-       thisDisplay.draw(t_objs,thisInterp.getCollisions(), thisFP.getCam() ,thisInterp.getColModes(), true);
+       thisDisplay.draw(t_objs,thisInterp.getCollisions(), thisFP.getCam() , true);
 
     }else{
 
@@ -103,7 +103,7 @@ void interface::draw(){
 
             case 3:
                 thisCapture.drawCap(320,0,640,480);
-                thisDisplay.draw(t_objs,thisInterp.getCollisions(), thisFP.getCam() ,thisInterp.getColModes(), false);
+                thisDisplay.draw(t_objs,thisInterp.getCollisions(), thisFP.getCam(), false);
                 thisDisplay.drawMenus();
                 break;
 
@@ -149,6 +149,10 @@ void interface::openConfig(string fileName){
 
 		if( XML.pushTag("BMSETTINGS", 0) ){
 
+            numSampleGrps = XML.getValue("NUMSAMPLEGRPS",4);
+            thisInterp.setNumSampleGrps(numSampleGrps);
+            thisDisplay.setNumSampleGrps(numSampleGrps);
+            thisDisplay.loadButtonImages();
 			thisCapture.openConfig(XML);
 			thisFP.openConfig(XML);
 			thisInterp.openConfig(XML);
@@ -169,6 +173,7 @@ void interface::saveConfig(string fileName){
 	int tagNum = XML.addTag("BMSETTINGS");
 	if( XML.pushTag("BMSETTINGS", tagNum) ){
 
+        XML.setValue("NUMSAMPLEGRPS", numSampleGrps, tagNum);
 		thisCapture.saveConfig(XML, tagNum);
 		thisFP.saveConfig(XML, tagNum);
 		thisInterp.saveConfig(XML, tagNum);
@@ -322,6 +327,12 @@ void interface::mouseReleased(int x, int y, int button){
 void interface::windowResized(int w, int h){
 
 
+
+}
+
+void interface::exit(){
+
+    thisInterp.sendInitialise();
 
 }
 

@@ -1,7 +1,6 @@
 #ifndef TRACKINGOBJECT_H
 #define TRACKINGOBJECT_H
 #include "ofMain.h"
-//#include "ofxVectorMath.h"
 #include "ofxCvMyCv.h"
 #include <algorithm>
 

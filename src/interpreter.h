@@ -3,7 +3,6 @@
 
 #include "ofMain.h"
 #include "ofxOsc.h"
-//#include "ofxVectorMath.h"
 #include "ofxXmlSettings.h"
 #include"trackingObject.h"
 
@@ -23,11 +22,9 @@ struct collision{
 
 struct patch{
 
-	ofVec2f pos;
 	int count;
-	int col;
-	int isLive;
-	bool isFilled;
+	int sampleGroup;
+	bool isActive;
 
 };
 
@@ -37,19 +34,20 @@ class interpreter
 public:
 
 	interpreter();
-	void setTrPtrs(vector<patch> * pnt_ptr, vector<int> * md_ptr);
+	void setTrPtrs(vector<patch> * pnt_ptr);
 	void feedObjects(trackingObject t_objs[][10], int size, bool newFrame);
 	void detectCollision(trackingObject* selectObj, int o_col, int o_i, trackingObject t_objs[][10]);
 	void sendInitialise();
 	void saveConfig(ofxXmlSettings XML, int tagNum);
 	void openConfig(ofxXmlSettings XML);
 	void checkForInit();
+	void checkForHandshake();
 	void drawMenus();
 	void draw(trackingObject t_objs[][10], int size);
 	void keyPressed(int key);
 	vector<collision>* getCollisions();
 	vector<int>* getColModes();
-
+    void setNumSampleGrps(int n);
 
 	virtual ~interpreter();
 protected:
@@ -57,26 +55,27 @@ private:
 
     ofxOscSender sender;
     ofxOscReceiver rec;
-    bool initialized;
+    bool isHandshake;
+    float initTimeStamp;
     float collDist, collSpeedThresh;
     int synthsRunning;
+    int numSampleGroups;
     int maxSynths;
     int speed_scale;
     int stillCount, stillTarget;
     vector<int> collisionsRunning;
     int maxCollisions;
     bool movingArray[4][10];
-	bool isTransforming[4];
-	int colTrs[4];
     vector<ofPoint> expiredCollisions;
     vector<collision> pastCollisions;
     vector< vector <bool> > nowCollisions;
 
-	vector<patch> * transRects;
-	vector<int>* colMode;
+	vector<patch> * transInfo;
 
+    int numSampleGrps;
     int selectedItem;
     int selectedMenu;
+    int port;
 
 
 };

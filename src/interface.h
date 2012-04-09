@@ -17,6 +17,7 @@ class interface : public ofBaseApp{
 
 public:
 
+    interface(string t_filename);
 	void setup();
 	void update();
 	void draw();
@@ -31,18 +32,21 @@ public:
 	void mouseReleased(int x, int y, int button);
 	void windowResized(int w, int h);
 
+	void exit();
+
 
 
 
 
 private:
 
-    int viewMode, fileOp;
+    int viewMode, fileOp, numSampleGrps;
     capture thisCapture;
     filterProjector thisFP;
     interpreter thisInterp;
     display thisDisplay;
 	myTextInput fileNameInput;
+	string filename;
 
     bool displayOn;
     trackingObject t_objs[4][10];

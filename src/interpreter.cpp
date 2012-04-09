@@ -4,6 +4,7 @@ interpreter::interpreter()
 {
 
 	sender.setup( HOST, PORT );
+	port = PORT;
 	rec.setup(20000);
 
 	for(int col = 0; col < 4; col ++){
@@ -16,7 +17,6 @@ interpreter::interpreter()
 		}
 		nowCollisions.push_back(temp);
 
-		colTrs[col] = 0;
 	}
 
 	collDist = 3.0f;
@@ -27,30 +27,59 @@ interpreter::interpreter()
 	maxSynths = 15;
 	synthsRunning = 0;
 	speed_scale = 15;
+	numSampleGrps = 4;
 
-	initialized = false;
+	isHandshake = true;
+
+}
+
+void interpreter::checkForHandshake(){
+
+    if(!isHandshake){
+
+        if(rec.hasWaitingMessages()){
+
+            ofxOscMessage m;
+            rec.getNextMessage( &m );
+
+            // check for mouse moved message
+            if ( m.getAddress() == "/handShake" )
+            {
+                isHandshake = true;
+            }
+
+        }else{
+            if(ofGetElapsedTimeMillis() - initTimeStamp  > 2000){
+                port += 1;
+                sender.setup(HOST, port);
+                sendInitialise();
+            }
+        }
+    }else{
+
+        checkForInit();
+    }
 
 }
 
 void interpreter::checkForInit(){
 
+
     if(rec.hasWaitingMessages()){
 
         ofxOscMessage m;
-		rec.getNextMessage( &m );
+        rec.getNextMessage( &m );
 
-		// check for mouse moved message
-		if ( m.getAddress() == "/port" )
-		{
-			// both the arguments are int32's
-			int t_port = m.getArgAsInt32( 0 );
-			sender.setup(HOST, t_port);
-			initialized = true;
-			sendInitialise();
+        // check for mouse moved message
+        if ( m.getAddress() == "/port" )
+        {
+            port = m.getArgAsInt32(0);
+            sender.setup(HOST, port);
+            sendInitialise();
+        }
 
-		}
+    }
 
-	}
 
 }
 
@@ -59,25 +88,15 @@ void interpreter::sendInitialise(){
 	ofxOscMessage m;
 	m.setAddress( "/init" );
 	sender.sendMessage(m);
-	m.clear();
-
+	isHandshake = false;
+	initTimeStamp = ofGetElapsedTimeMillis();
 
 
 }
 
-vector<int>* interpreter::getColModes(){
-
-	return colMode;
-
-}
 
 
-void interpreter::setTrPtrs(vector<patch> * pnt_ptr, vector<int>* md_ptr){
-
-	transRects = pnt_ptr;
-	colMode = md_ptr;
-
-}
+void interpreter::setTrPtrs(vector<patch> * pnt_ptr){transInfo = pnt_ptr;}
 
 void interpreter::feedObjects(trackingObject t_objs[][10], int size, bool newFrame){
 
@@ -107,46 +126,41 @@ void interpreter::feedObjects(trackingObject t_objs[][10], int size, bool newFra
 
         if(stillCount == stillTarget){
 
-            int sel = 0;
+            int selCol = 0;
             int t_count = 0;
 
             for(int i = 0; i < 4; i++){
 
                 if(colCount[i] > t_count){
-                    sel = i; t_count = colCount[i];
+                    selCol = i; t_count = colCount[i];
                 }
             }
 
-            if(colCount[sel] >= 3){ // no changes when less than three of any colour
+            if(colCount[selCol] >= 3){ // no changes when less than three of any colour
 
                 //changes sound set + plays transforming sound
-                colTrs[sel] = (colTrs[sel]+1)%4; //simple increment for time being
-
-
-                isTransforming[sel] = true;
-                transRects->at(colTrs[sel]).isLive = 46;
-                colMode->at(sel) = colTrs[sel];
-                transRects->at(colTrs[sel]).count = 90;
-                transRects->at(colTrs[sel]).col = sel;
+                transInfo->at(selCol).sampleGroup = (transInfo->at(selCol).sampleGroup+1)%4; //simple increment for time being
+                transInfo->at(selCol).isActive = true;
+                transInfo->at(selCol).count = 90;
 
                 ofxOscMessage m;
                 m.setAddress( "/transformOn" );
-                m.addIntArg(sel);
-                m.addIntArg(colTrs[sel]);
+                m.addIntArg(selCol);
+                m.addIntArg(transInfo->at(selCol).sampleGroup);
                 sender.sendMessage(m);
                 m.clear();
 
                 //turnoff any current moving synths for that colour
                 for(int st = 0; st < 10; st ++){
 
-                    if(movingArray[sel][st]){
+                    if(movingArray[selCol][st]){
 
-                        movingArray[sel][st] = false;
+                        movingArray[selCol][st] = false;
                         synthsRunning -= 1;
 
                         ofxOscMessage m;
                         m.setAddress( "/still" );
-                        m.addIntArg(sel);
+                        m.addIntArg(selCol);
                         m.addIntArg(st);
 
                         sender.sendMessage(m);
@@ -189,7 +203,7 @@ void interpreter::feedObjects(trackingObject t_objs[][10], int size, bool newFra
 
 		for(int col = 0; col < 4; col ++){
 
-			if(!isTransforming[col])
+			if(!transInfo->at(col).isActive)
 			{
 
 				for(int i = 0; i < 10; i ++){
@@ -280,7 +294,7 @@ void interpreter::feedObjects(trackingObject t_objs[][10], int size, bool newFra
 
 					trackingObject *selectObj;
 
-					if(t_objs[col][i].moving && t_objs[col][i].present && colTrs[col] == 3){
+					if(t_objs[col][i].moving && t_objs[col][i].present && transInfo->at(col).sampleGroup == numSampleGroups - 1){ //the last group is the collision grp
 
 						if(t_objs[col][i].speed > collSpeedThresh){
 							selectObj = &t_objs[col][i];
@@ -306,10 +320,10 @@ void interpreter::feedObjects(trackingObject t_objs[][10], int size, bool newFra
 
 		for(int tr = 0; tr < 4; tr++){
 
-			if(transRects->at(tr).count > 0){
-				transRects->at(tr).count -= 1;
+			if(transInfo->at(tr).count > 0){
+				transInfo->at(tr).count -= 1;
 			}else{
-                isTransforming[transRects->at(tr).col] = false;
+                transInfo->at(tr).isActive = false;
 			}
 
 		}
@@ -507,7 +521,6 @@ void interpreter::saveConfig(ofxXmlSettings XML, int tagNum){
 		XML.setValue("MAXCOLL", maxCollisions, tagNum);
 		XML.setValue("SPEEDSCALE", speed_scale, tagNum);
 		XML.setValue("COLLSPEEDTHRESH", collSpeedThresh, tagNum);
-
 		XML.popTag();
 
 	}
@@ -524,6 +537,7 @@ void interpreter::openConfig(ofxXmlSettings XML){
 		maxCollisions = XML.getValue("MAXCOLL",0);
 		speed_scale = XML.getValue("SPEEDSCALE", 10.0f);
 		collSpeedThresh = XML.getValue("COLLSPEEDTHRESH",5.0f);
+
 
 		XML.popTag();
 
@@ -614,6 +628,13 @@ vector<collision>* interpreter::getCollisions(){
 	return &pastCollisions;
 
 }
+
+void interpreter::setNumSampleGrps(int n){
+
+    numSampleGrps = n;
+
+}
+
 
 interpreter::~interpreter()
 {
